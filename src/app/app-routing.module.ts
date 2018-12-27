@@ -4,10 +4,15 @@ import { Routes, RouterModule } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    loadChildren: 'src/app/featured/authorization/authorization.module#AuthorizationModule'
+    redirectTo: 'dashboard/analytics',
+    pathMatch: 'full'
   },
   {
     path: 'dashboard',
+    loadChildren: 'src/app/featured/dashboard/dashboard.module#DashboardModule'
+  },
+  {
+    path: '**',
     loadChildren: 'src/app/featured/dashboard/dashboard.module#DashboardModule'
   }
 ];
