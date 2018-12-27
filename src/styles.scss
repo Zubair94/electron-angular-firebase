@@ -1,0 +1,21 @@
+@import "./styles/bootstrap";
+@import "./styles/variables.scss";
+@import "./styles/mixins.scss";
+@import "./styles/global.scss";
+@import "./styles/utilities.scss";
+@import "./styles/navbar.scss";
+@import "./styles/cards.scss";
+@import "./styles/login.scss";
+@import "./styles/footer.scss";
+
+.error-color{
+    color: red;
+}
+.btn:focus{
+    outline: none;
+    box-shadow: none;
+}
+.btn:hover{
+    outline: none;
+    box-shadow: none;
+}
