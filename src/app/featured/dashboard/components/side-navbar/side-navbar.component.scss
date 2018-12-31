@@ -13,11 +13,17 @@
 .sidebar {
     height: 100%;
     min-height: 100vh;
+    #dropdown-item-last{
+        padding-bottom: 0;
+    }
     .dropdown-item{
         color: rgba(255, 255, 255, 0.5);
     }   
     .dropdown-extra{
         padding-bottom: 1rem;
+        .show{
+            padding: 0;
+        }
     }
     .dropdown.show .dropdown-toggle::after {
         content: none;

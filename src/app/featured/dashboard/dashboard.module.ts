@@ -4,13 +4,13 @@ import { SideNavbarComponent } from './components/side-navbar/side-navbar.compon
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { AnalyticsComponent } from './pages/analytics/analytics.component';
+import { InventoryComponent } from './pages/inventory/inventory.component';
 
 @NgModule({
   declarations: [
     DashboardComponent, 
     SideNavbarComponent,
-    AnalyticsComponent
+    InventoryComponent
   ],
   imports: [
     SharedModule,
