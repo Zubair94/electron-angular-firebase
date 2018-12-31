@@ -1,6 +1,6 @@
-# Angular Admin Panel Boilerplate
+# Angular Electron with Firestore
 
-Admin Panel Boilerplate with Bootstrap and Angular Datatables.
+Angular Electron App with Firebase Firestore
 
 # Features
 
