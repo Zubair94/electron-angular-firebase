@@ -3,29 +3,29 @@
   <li #dropdownlist class="nav-item dropdown dropdown-extra">
     <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" (click)="onToggle()" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <fa-icon [icon]="['fas','chart-area']"></fa-icon>
-      <span> Analytics</span>
+      <span> Inventory Store</span>
     </a>
     <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-      <a class="dropdown-item" href="login.html">
+      <a class="dropdown-item" routerLink="/dashboard/inventory-details" [queryParams]="{ dataStore: 'loh'}" (click)="onToggle()" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
         <fa-icon [icon]="['fas','newspaper']"></fa-icon>
-        <span> Article Featured</span>
+        <span> Light of Hope</span>
       </a>
-      <a class="dropdown-item" href="login.html">
+      <a class="dropdown-item" routerLink="/dashboard/inventory-details" [queryParams]="{ dataStore: 'togumogu'}" (click)="onToggle()" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
         <fa-icon [icon]="['fas','newspaper']"></fa-icon>
-        <span> Article Featured</span>
+        <span> ToguMogu</span>
       </a>
-      <a id="dropdown-item-last" class="dropdown-item" href="register.html">
+      <a id="dropdown-item-last" class="dropdown-item" routerLink="/dashboard/inventory-details" [queryParams]="{ dataStore: 'project'}" (click)="onToggle()" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
         <fa-icon [icon]="['fas','newspaper']"></fa-icon>
-        <span> Article Featured</span>
+        <span> Project</span>
       </a>
     </div>
   </li>
   <li class="nav-item" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
     <a class="nav-link" routerLink="/dashboard/inventory">
       <fa-icon [icon]="['fas','chart-area']"></fa-icon>
-      <span> Index</span></a>
+      <span> Report</span></a>
   </li>
-  <li class="nav-item" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+  <!--<li class="nav-item" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
     <a class="nav-link" routerLink="/dashboard/test">
       <fa-icon [icon]="['fas','upload']"></fa-icon>
       <span> Add</span></a>
@@ -45,5 +45,5 @@
     <a class="nav-link" routerLink="/dashboard/test">
       <fa-icon [icon]="['fas','user-cog']"></fa-icon>
       <span> Report</span></a>
-  </li>
+  </li>-->
 </ul>

@@ -11,8 +11,12 @@
 }
   
 .sidebar {
-    height: 100%;
     min-height: 100vh;
+    position: fixed;
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    overflow-x: hidden; /* Disable horizontal scroll */
     #dropdown-item-last{
         padding-bottom: 0;
     }

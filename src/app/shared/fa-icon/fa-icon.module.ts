@@ -1,7 +1,13 @@
 import { NgModule } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faBars, faBell, faUserCircle, faEnvelope, faSearch, faChartArea, faUserPlus, faUpload, faNewspaper, faUserCog, faUsersCog, faChevronRight, faTable, faCertificate } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faBell, faUserCircle, faEnvelope, faSearch, faChartArea, faUserPlus, faUpload, faNewspaper, faUserCog, faUsersCog, faChevronRight, faTable, faCertificate, faTrashAlt, faFolderPlus, faEdit, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+
+library.add(faTrashAlt);
+library.add(faPlus);
+library.add(faMinus);
+library.add(faFolderPlus);
+library.add(faEdit);
 
 library.add(faUserCog);
 library.add(faUsersCog);
