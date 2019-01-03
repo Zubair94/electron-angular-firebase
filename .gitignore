@@ -47,3 +47,6 @@ package-lock.json
 
 #electron extras
 script.html
+
+# config
+/src/environments/config.ts
