@@ -1,0 +1,5 @@
+export interface inventoryInt{
+    name: string,
+    amount: number,
+    type: number
+}

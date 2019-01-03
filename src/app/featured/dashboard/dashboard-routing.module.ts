@@ -11,7 +11,7 @@ const routes: Routes = [
     children:[
       {
         path: '',
-        redirectTo: '/dashboard/inventory',
+        redirectTo: '/dashboard/inventory-details',
         pathMatch: 'full'
       },
       {

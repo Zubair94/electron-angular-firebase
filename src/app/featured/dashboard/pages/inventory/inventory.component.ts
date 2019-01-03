@@ -7,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InventoryComponent implements OnInit {
 
+  dtOptions: any = {};
   constructor() { }
 
   ngOnInit() {

@@ -17,7 +17,7 @@ function createWindow(){
         protocol: 'file',
         slashes: true
     }));
-    //homeWindow.webContents.openDevTools();
+    homeWindow.webContents.openDevTools();
        
     homeWindow.on('closed', () => {
         homeWindow = null;
