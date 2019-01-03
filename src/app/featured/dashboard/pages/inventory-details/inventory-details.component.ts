@@ -129,6 +129,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
     this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
       // Destroy the table first
       dtInstance.destroy();
+      dtInstance.rows().deselect();
       // Call the dtTrigger to rerender again
       this.dtTrigger.next();
     });
@@ -195,13 +196,13 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
     //console.log(this.selectedInventory);
     //const element = this.inventoryRef.toArray()[this.selectedInventory.index];
     //console.log('#' + this.tableRef.nativeElement.id);
-    var r = $('#'+this.tableRef.nativeElement.id).DataTable();
+    //var r = $('#'+this.tableRef.nativeElement.id).DataTable();
     //console.log('#'+this.tableRef.nativeElement.id+'>tbody>tr.selected');
     //console.log(element);
     //var table = $('#'+this.tableRef.nativeElement.id).DataTable(this.dtOptions);//.rows().deselect();
     // table.destroy();
     //console.log(r);
-    r.rows().deselect();
+    //r.rows().deselect();
     this.rerender();
     //console.log(r)
     //console.log(table.data());
