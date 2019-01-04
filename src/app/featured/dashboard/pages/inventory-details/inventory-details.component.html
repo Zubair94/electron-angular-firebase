@@ -38,7 +38,7 @@
                     <span> Deposit</span>
                   </button>
                   <div class="mr-2"></div>
-                  <button class="btn btn-success">
+                  <button (click)="withdraw(5)" type="button" class="btn btn-success">
                     <fa-icon [icon]="['fas','minus']"></fa-icon>
                     <span> Withdraw</span>
                   </button>
@@ -54,7 +54,7 @@
                   </button>
                 </div>
                 <div class="table-responsive">
-                  <table #tableRef class="table table-bordered table-hover" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" width="100%" cellspacing="0">
+                  <table class="table table-bordered table-hover" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" width="100%" cellspacing="0">
                     <thead>
                       <tr>
                         <th scope="col">ID</th>

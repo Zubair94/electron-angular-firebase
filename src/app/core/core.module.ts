@@ -14,13 +14,13 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 
 import { AlertService } from './services/alert.service';
-import { TestmodalComponent } from './components/testmodal/testmodal.component';
 import { ModalService } from './services/modal.service';
 import { environment } from 'src/environments/environment.prod';
+import { DepositModalComponent } from './components/deposit-modal/deposit-modal.component';
 
 
 @NgModule({
-  declarations: [TestmodalComponent],
+  declarations: [DepositModalComponent],
   imports: [
     HttpClientModule,
     BrowserAnimationsModule,
@@ -40,7 +40,7 @@ import { environment } from 'src/environments/environment.prod';
   exports:[
   ],
   entryComponents: [
-    TestmodalComponent
+    DepositModalComponent
   ]
 })
 export class CoreModule { 
