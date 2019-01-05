@@ -17,6 +17,7 @@ import { AlertService } from './services/alert.service';
 import { ModalService } from './services/modal.service';
 import { environment } from 'src/environments/environment.prod';
 import { DepositModalComponent } from './components/deposit-modal/deposit-modal.component';
+import { InventoryService } from './services/inventory.service';
 
 
 @NgModule({
@@ -57,6 +58,7 @@ export class CoreModule {
         AuthorizationService,
         AlertService,
         ModalService,
+        InventoryService,
         {
           provide: HTTP_INTERCEPTORS,
           useClass: ApiRouteInterceptor,

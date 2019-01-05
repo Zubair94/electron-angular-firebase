@@ -4,17 +4,16 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { ModalService } from 'src/app/core/services/modal.service';
 import { Observable, Subject } from 'rxjs';
-import * as $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-select';
 import 'datatables.net-bs4';
 import 'datatables.net-select-bs4';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { Inventory } from 'src/app/models/inventory.model';
 import { AlertService } from 'src/app/core/services/alert.service';
 import { DataTableDirective } from 'angular-datatables';
 import { lohSelect, togumoguSelect } from 'src/app/models/label-values';
 import { DepositModalComponent } from 'src/app/core/components/deposit-modal/deposit-modal.component';
+import { InventoryService } from 'src/app/core/services/inventory.service';
 @Component({
   selector: 'app-inventory-details',
   templateUrl: './inventory-details.component.html',
@@ -36,7 +35,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
 
   currentSelect: Select[] = this.lohSelect;
   currentSelectValue: Select = null;
-  constructor(private alertService: AlertService, private renderer: Renderer2, private fireStore: AngularFirestore, private modalService: ModalService, private router: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(private inventoryService: InventoryService, private alertService: AlertService, private renderer: Renderer2, private modalService: ModalService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.chooseSelectMenu();
@@ -45,16 +44,17 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
         style: 'single'
       }
     };
-    this.inventoryList.push(new Inventory("abcd", {
-      name: "pen",
-      amount: 50,
-      type: 1
-    }, this.lohSelect));
-    this.inventoryList.push(new Inventory("efgh", {
-      name: "pencil",
-      amount: 20,
-      type: 2
-    }, this.lohSelect));
+    this.inventoryService.fetchInventory();
+    // this.inventoryList.push(new Inventory("abcd", {
+    //   name: "pen",
+    //   amount: 50,
+    //   type: 1
+    // }, this.lohSelect));
+    // this.inventoryList.push(new Inventory("efgh", {
+    //   name: "pencil",
+    //   amount: 20,
+    //   type: 2
+    // }, this.lohSelect));
     // this.fireStore.collection('inventory').get().subscribe(snapshot => {
     //   snapshot.docs.forEach(inventory => {
     //     console.log(inventory.data());
@@ -82,19 +82,23 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   ngOnDestroy(): void {
-    // Do not forget to unsubscribe the event
     this.dtTrigger.unsubscribe();
   }
 
-  rerender(): void {
+  reRenderTable(): void {
     this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-      // Destroy the table first
       dtInstance.destroy();
       dtInstance.rows().deselect();
-      // Call the dtTrigger to rerender again
       this.dtTrigger.next();
     });
   }
+
+  getInventoryData(){
+    
+  }
+  // onTypeSelected(){
+
+  // }
 
   chooseSelectMenu(){
     this.activatedRoute.queryParams.pipe(filter(params => params.dataStore)).subscribe(params => {
@@ -141,7 +145,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
           this.inventoryList[key].amount += amount;
         }
       });
-      this.rerender();
+      this.reRenderTable();
       this.selectedInventory = null;
     }
   }
@@ -155,7 +159,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
           this.inventoryList[key].amount -= amount;
         }
       });
-      this.rerender();
+      this.reRenderTable();
       this.selectedInventory = null;
     }
   }
