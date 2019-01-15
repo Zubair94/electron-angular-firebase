@@ -7,8 +7,9 @@
         </select>
     </div>
     <div class="form-group col-md-4">
-      <label for="type-select">Select Inventory Store Type:</label>
-      <select [(ngModel)]="currentStoreValue" (change)="filterStore('store', currentStoreValue)" class="form-control" id="type-select">
+      <label for="store-select">Select Inventory Store Type:</label>
+      <select [(ngModel)]="currentStoreValue" (change)="filterStore('store', currentStoreValue)" class="form-control" id="store-select">
+        <option [ngValue]="0">All</option>
         <option [ngValue]="1">Light of Hope</option>
         <option [ngValue]="2">ToguMogu</option>
       </select>
@@ -34,12 +35,12 @@
                 Data Table Example</div>
               <div class="card-body">
                 <div class="table-buttons d-flex justify-content-start align-items-center my-2">
-                  <button (click)="test2()" type="button" class="btn btn-success">
+                  <button (click)="onCreateModal()" type="button" class="btn btn-success">
                     <fa-icon [icon]="['fas','folder-plus']"></fa-icon>
                     <span> Create</span>
                   </button>
                   <div class="mr-2"></div>
-                  <button (click)="deposit(5)" type="button" class="btn btn-success">
+                  <button (click)="onDepositModal()" type="button" class="btn btn-success">
                     <fa-icon [icon]="['fas','plus']"></fa-icon>
                     <span> Deposit</span>
                   </button>

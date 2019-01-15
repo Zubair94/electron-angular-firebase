@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList, Renderer2, OnDestroy, AfterViewInit, OnChanges } from '@angular/core';
 import { Select } from 'src/app/models/select';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import 'datatables.net';
 import 'datatables.net-select';
@@ -14,6 +14,7 @@ import { ModalService } from 'src/app/core/services/modal.service';
 import { Inventory } from 'src/app/models/inventory.model';
 import { AlertService } from 'src/app/core/services/alert.service';
 import { lohSelect, togumoguSelect } from 'src/app/models/label-values';
+import { inventoryInt } from 'src/app/models/inventory';
 import { DepositModalComponent } from 'src/app/core/components/deposit-modal/deposit-modal.component';
 import { InventoryService } from 'src/app/core/services/inventory.service';
 import { CreateModalComponent } from 'src/app/core/components/create-modal/create-modal.component';
@@ -39,6 +40,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
 
   activeFilters = {};
 
+  //private selectedInventory = new BehaviorSubject
   selectedInventory: any = null;
   
   lohSelect: Select[] = lohSelect;
@@ -47,7 +49,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
  
   currentTypeSelect: Select[] = this.lohSelect;
   
-  currentStoreValue: number = null;
+  currentStoreValue: number = 0;
   currentTypeValue: Select = null;
   constructor(private inventoryService: InventoryService, private alertService: AlertService, private renderer: Renderer2, private modalService: ModalService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
@@ -62,11 +64,11 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
     //Inventory
     this.inventorySubscription = this.inventoryService.inventoryListChanged.subscribe(inventoryList => {
       this.inventoryList = inventoryList;
-      this.applyFilter();
+      this.applyFilter(0);
     });
     this.isInventoryChangedSubscription = this.inventoryService.isInventoryListChanged.subscribe(isChanged => {
       if(isChanged === 3){
-        this.reRenderOnly();
+        this.reRenderTable();
       } else {
         this.dtTrigger.next();
       }
@@ -83,23 +85,24 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
     this.routerSubscription.unsubscribe();
   }
 
-  reRenderOnly(){
+  reRenderTable(){
     this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
       dtInstance.destroy();
       this.dtTrigger.next();
     });
   }
 
-  reRenderTable(): void {
+  deSelectTable(): void {
     this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-      dtInstance.destroy();
       dtInstance.rows().deselect();
-      this.dtTrigger.next();
     });
   }
 
-  private applyFilter(){
+  private applyFilter(state: number){
     this.filteredInventoryList = _.filter(this.inventoryList, _.conforms(this.activeFilters));
+    if(state === 1){
+      this.reRenderTable();
+    }
   }
 
   filterType(property: string, rule: any){
@@ -108,26 +111,31 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
     } else {
       rule = rule.value;
       this.activeFilters[property] = val => val == rule;
-      this.applyFilter();
+      this.applyFilter(1);
     }
   }
 
   filterStore(property: string, rule: any){
     if(rule === 1){
       this.currentTypeSelect = this.lohSelect;
+      this.currentTypeValue = null;
       this.activeFilters[property] = val => val == rule;
-      this.applyFilter();
+      this.applyFilter(1);
+    } else if (rule ===2) {
+      this.currentTypeSelect = this.togumoguSelect;
+      this.currentTypeValue = null;
+      this.activeFilters[property] = val => val == rule;
+      this.applyFilter(1);
     } else {
-      this.currentTypeSelect = togumoguSelect;
-      this.activeFilters[property] = val => val == rule;
-      this.applyFilter();
+      //this.removeFilter("type");
+      this.removeFilter("store");
     }
   }
 
   removeFilter(property: string) {
     delete this.activeFilters[property]
     this[property] = null
-    this.applyFilter()
+    this.applyFilter(1)
   }
 
   getQueryParams(){
@@ -138,7 +146,28 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
   }
 
   onCreateModal(){
-    
+    const config:any = {
+      backdrop: true,
+      ignoreBackdropClick: true
+    };
+    this.modalService.openModal(CreateModalComponent, config);
+  }
+
+  onDepositModal(){
+    if(this.selectedInventory === null){
+      this.alertService.error("Please Select An Inventory First", "Error!!!");
+    } else {
+      const config:any = {
+        backdrop: true,
+        ignoreBackdropClick: true,
+        initialState:{
+          inventory: this.selectedInventory
+        }
+      };
+      this.modalService.openModal(DepositModalComponent, config);
+      this.deSelectTable();
+      this.selectedInventory = null;
+    }
   }
   
   test(){
@@ -171,7 +200,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
           this.inventoryList[key].amount += amount;
         }
       });
-      this.reRenderTable();
+      this.deSelectTable();
       this.selectedInventory = null;
     }
   }
@@ -185,7 +214,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
           this.inventoryList[key].amount -= amount;
         }
       });
-      this.reRenderTable();
+      this.deSelectTable();
       this.selectedInventory = null;
     }
   }
@@ -193,6 +222,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
   onRowClick(item: Inventory, index){
     index = parseInt(index);
     const element = this.inventoryRef.toArray()[index].nativeElement;
+    console.log(element);
     if(!element.classList.contains('selected')){
       this.selectedInventory = {
         item: item,
@@ -200,6 +230,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
       };
     }
     else {
+      //this.deSelectTable();
       this.selectedInventory = null
     }
   }

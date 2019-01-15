@@ -6,6 +6,8 @@ import { inventoryInt } from 'src/app/models/inventory';
 import { lohSelect } from 'src/app/models/label-values';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { Select } from 'src/app/models/select';
+import { Deposit } from 'src/app/models/deposit.model';
+import { depositInt } from 'src/app/models/deposit';
 @Injectable({
   providedIn: 'root'
 })
@@ -15,7 +17,8 @@ export class InventoryService {
   inventoryListChanged: Subject<Inventory[]> = new Subject();
   private inventoryBehaviour = new BehaviorSubject(1);
   isInventoryListChanged = this.inventoryBehaviour.asObservable();
-  constructor(private fireStore: AngularFirestore) { }
+  constructor(private fireStore: AngularFirestore) { 
+  }
 
   fetchInventory(){
     this.fireStore.collection('inventory')
@@ -43,6 +46,20 @@ export class InventoryService {
         this.inventoryBehaviour.next(3)
       }
     });
+  }
+
+  addInventory(inventory: inventoryInt){
+    this.fireStore.collection('inventory').add(inventory);
+  }
+
+  updateInventory(inventoryId: string, amount: number){
+    this.fireStore.doc('inventory/'+inventoryId).update({
+      amount: amount
+    });
+  }
+
+  addDeposit(deposit: depositInt){
+    this.fireStore.collection('deposit').add(deposit);
   }
 
 }
