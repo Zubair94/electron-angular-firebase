@@ -1,16 +1,18 @@
-import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList, Renderer2, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList, Renderer2, OnDestroy, AfterViewInit, OnChanges } from '@angular/core';
 import { Select } from 'src/app/models/select';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subject, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ModalService } from 'src/app/core/services/modal.service';
-import { Observable, Subject } from 'rxjs';
 import 'datatables.net';
 import 'datatables.net-select';
 import 'datatables.net-bs4';
 import 'datatables.net-select-bs4';
+import * as _ from 'lodash';
+import { DataTableDirective } from 'angular-datatables';
+
+import { ModalService } from 'src/app/core/services/modal.service';
 import { Inventory } from 'src/app/models/inventory.model';
 import { AlertService } from 'src/app/core/services/alert.service';
-import { DataTableDirective } from 'angular-datatables';
 import { lohSelect, togumoguSelect } from 'src/app/models/label-values';
 import { DepositModalComponent } from 'src/app/core/components/deposit-modal/deposit-modal.component';
 import { InventoryService } from 'src/app/core/services/inventory.service';
@@ -19,70 +21,72 @@ import { InventoryService } from 'src/app/core/services/inventory.service';
   templateUrl: './inventory-details.component.html',
   styleUrls: ['./inventory-details.component.scss']
 })
-export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewInit {
+export class InventoryDetailsComponent implements OnInit, OnDestroy {
   @ViewChildren('inventoryRef') private inventoryRef: QueryList<ElementRef>;
-  @ViewChild(DataTableDirective)
+  @ViewChild(DataTableDirective) 
   dtElement: DataTableDirective;
-  //items: Observable<any[]>;
-
-  selectedInventory: any = null;
-  inventoryList: Inventory[] = [];
+  
   dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();
-  currentStore: string;
+
+  routerSubscription: Subscription;
+
+  inventorySubscription: Subscription;
+  isInventoryChangedSubscription: Subscription;
+  inventoryList: Inventory [];
+  filteredInventoryList: Inventory[];
+
+  activeFilters = {};
+
+  selectedInventory: any = null;
+  
   lohSelect: Select[] = lohSelect;
   togumoguSelect: Select[] = togumoguSelect;
 
-  currentSelect: Select[] = this.lohSelect;
-  currentSelectValue: Select = null;
+ 
+  currentTypeSelect: Select[] = this.lohSelect;
+  
+  currentStoreValue: number = null;
+  currentTypeValue: Select = null;
   constructor(private inventoryService: InventoryService, private alertService: AlertService, private renderer: Renderer2, private modalService: ModalService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
-    this.chooseSelectMenu();
+    //Datatables
     this.dtOptions = {
       select: {
         style: 'single'
       }
     };
-    this.inventoryService.fetchInventory();
-    // this.inventoryList.push(new Inventory("abcd", {
-    //   name: "pen",
-    //   amount: 50,
-    //   type: 1
-    // }, this.lohSelect));
-    // this.inventoryList.push(new Inventory("efgh", {
-    //   name: "pencil",
-    //   amount: 20,
-    //   type: 2
-    // }, this.lohSelect));
-    // this.fireStore.collection('inventory').get().subscribe(snapshot => {
-    //   snapshot.docs.forEach(inventory => {
-    //     console.log(inventory.data());
-    //     console.log(inventory.id);
-    //   });
-    // });
-    // this.fireStore.collection('deposit').get().subscribe(snapshot => {
-    //   console.log(snapshot.size);
-    //   snapshot.docs.forEach(deposit => {
-    //     console.log(deposit.data());
-    //     console.log(deposit.id);
-    //   });
-    // });
-    //this.items = this.fireStore.collection('inventory').snapshotChanges();
-    //console.log(this.items);
-    //this.items.subscribe(values => {
-      //console.log(values[0].id);
-      //console.log(values);
-    //});
-    //console.log(this.currentStore);
-  }
 
-  ngAfterViewInit(): void {
-    this.dtTrigger.next();
+    //Inventory
+    this.inventorySubscription = this.inventoryService.inventoryListChanged.subscribe(inventoryList => {
+      this.inventoryList = inventoryList;
+      this.applyFilter();
+    });
+    this.isInventoryChangedSubscription = this.inventoryService.isInventoryListChanged.subscribe(isChanged => {
+      if(isChanged === 3){
+        this.reRenderOnly();
+      } else {
+        this.dtTrigger.next();
+      }
+    });
+    
+    this.inventoryService.fetchInventory();
+    
   }
 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
+    this.inventorySubscription.unsubscribe();
+    this.isInventoryChangedSubscription.unsubscribe();
+    this.routerSubscription.unsubscribe();
+  }
+
+  reRenderOnly(){
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+      dtInstance.destroy();
+      this.dtTrigger.next();
+    });
   }
 
   reRenderTable(): void {
@@ -93,28 +97,49 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
     });
   }
 
-  getInventoryData(){
-    
+  private applyFilter(){
+    this.filteredInventoryList = _.filter(this.inventoryList, _.conforms(this.activeFilters));
   }
-  // onTypeSelected(){
 
-  // }
+  filterType(property: string, rule: any){
+    if(rule.label === "All"){
+      this.removeFilter("type");
+    } else {
+      rule = rule.value;
+      this.activeFilters[property] = val => val == rule;
+      this.applyFilter();
+    }
+  }
 
-  chooseSelectMenu(){
-    this.activatedRoute.queryParams.pipe(filter(params => params.dataStore)).subscribe(params => {
-      //console.log(params);
-      this.currentStore = params.dataStore;
-      if(this.currentStore === "loh"){
-        this.currentSelect = this.lohSelect;
-      } else if(this.currentStore === "togumogu"){
-        this.currentSelect = this.togumoguSelect;
-      } else {
-        this.router.navigate(['/dashboard/inventory-details'], { queryParams: { dataStore: 'loh' }});
-      }
+  filterStore(property: string, rule: any){
+    if(rule === 1){
+      this.currentTypeSelect = this.lohSelect;
+      this.activeFilters[property] = val => val == rule;
+      this.applyFilter();
+    } else {
+      this.currentTypeSelect = togumoguSelect;
+      this.activeFilters[property] = val => val == rule;
+      this.applyFilter();
+    }
+  }
+
+  removeFilter(property: string) {
+    delete this.activeFilters[property]
+    this[property] = null
+    this.applyFilter()
+  }
+
+  getQueryParams(){
+    this.routerSubscription = this.activatedRoute.queryParams.pipe(filter(params => params.dataStore)).subscribe(params => {
+      console.log(params);
       //console.log(this.currentStore);
     });
   }
 
+  onCreateModal(){
+    
+  }
+  
   test(){
     console.log("test");
   }
@@ -167,7 +192,6 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
   onRowClick(item: Inventory, index){
     index = parseInt(index);
     const element = this.inventoryRef.toArray()[index].nativeElement;
-    //console.log(this.inventoryRef.toArray()[index]);
     if(!element.classList.contains('selected')){
       this.selectedInventory = {
         item: item,
@@ -177,6 +201,5 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
     else {
       this.selectedInventory = null
     }
-    //console.log(this.selectedInventory);
   }
 }

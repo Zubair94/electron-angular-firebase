@@ -6,11 +6,11 @@
       <span> Inventory Store</span>
     </a>
     <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-      <a class="dropdown-item" routerLink="/dashboard/inventory-details" [queryParams]="{ dataStore: 'loh'}" (click)="onToggle()" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+      <a class="dropdown-item" routerLink="/dashboard/inventory-details" (click)="onToggle()" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
         <fa-icon [icon]="['fas','newspaper']"></fa-icon>
         <span> Light of Hope</span>
       </a>
-      <a class="dropdown-item" routerLink="/dashboard/inventory-details" [queryParams]="{ dataStore: 'togumogu'}" (click)="onToggle()" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+      <a class="dropdown-item" routerLink="/dashboard/inventory-details" (click)="onToggle()" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
         <fa-icon [icon]="['fas','newspaper']"></fa-icon>
         <span> ToguMogu</span>
       </a>

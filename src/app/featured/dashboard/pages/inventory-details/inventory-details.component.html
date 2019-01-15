@@ -1,11 +1,17 @@
 <div class="inventory-details-wrapper">
-  <div class="inventory-select-field d-flex justify-content-center align-items-center">
-    <div class="form-group w-50">
+  <div class="inventory-select-field row justify-content-center">
+    <div class="form-group col-md-4">
         <label for="type-select">Select Inventory Type:</label>
-        <select [(ngModel)]="currentSelectValue" class="form-control" id="type-select">
-          <option [ngValue]="null">Choose an Inventory type...</option>
-          <option *ngFor="let currentSelectValue of currentSelect" [ngValue]="currentSelectValue">{{currentSelectValue.label}}</option>
+        <select [(ngModel)]="currentTypeValue" (change)="filterType('type', currentTypeValue)" class="form-control" id="type-select">
+          <option *ngFor="let currentTypeValue of currentTypeSelect" [ngValue]="currentTypeValue">{{currentTypeValue.label}}</option>
         </select>
+    </div>
+    <div class="form-group col-md-4">
+      <label for="type-select">Select Inventory Store Type:</label>
+      <select [(ngModel)]="currentStoreValue" (change)="filterStore('store', currentStoreValue)" class="form-control" id="type-select">
+        <option [ngValue]="1">Light of Hope</option>
+        <option [ngValue]="2">ToguMogu</option>
+      </select>
     </div>
   </div>
   <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -64,7 +70,7 @@
                       </tr>
                     </thead>
                     <tbody>	
-                      <tr #inventoryRef (click)="onRowClick(inventory, i)" *ngFor="let inventory of inventoryList; let i = index;">
+                      <tr #inventoryRef (click)="onRowClick(inventory, i)" *ngFor="let inventory of filteredInventoryList; let i = index;">
                         <td>{{inventory.id}}</td>
                         <td>{{inventory.name}}</td>
                         <td>{{inventory.amount}}</td>

@@ -41,3 +41,34 @@ export const togumoguSelect: Select[] = [
       value: 8
     }
 ];
+
+export const valueSelect: Select[] = [
+  {
+    label: "Kids Time",
+    value: 1
+  },
+  {
+    label: "Teachers Time",
+    value: 2
+  },
+  {
+    label: "Sputnique",
+    value: 3
+  },
+  {
+    label: "Porua",
+    value: 4
+  },
+  {
+    label: "Corporate",
+    value: 5
+  },
+  {
+    label: "ToguMogu",
+    value: 7
+  },
+  {
+    label: "Baby Pixel",
+    value: 8
+  }
+]
