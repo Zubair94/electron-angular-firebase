@@ -16,6 +16,7 @@ import { AlertService } from 'src/app/core/services/alert.service';
 import { lohSelect, togumoguSelect } from 'src/app/models/label-values';
 import { DepositModalComponent } from 'src/app/core/components/deposit-modal/deposit-modal.component';
 import { InventoryService } from 'src/app/core/services/inventory.service';
+import { CreateModalComponent } from 'src/app/core/components/create-modal/create-modal.component';
 @Component({
   selector: 'app-inventory-details',
   templateUrl: './inventory-details.component.html',
@@ -158,7 +159,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
         title: 'Modal with component'
       }
     };
-    this.modalService.openModal(DepositModalComponent, config);
+    this.modalService.openModal(CreateModalComponent, config);
   }
 
   deposit(amount: number){
