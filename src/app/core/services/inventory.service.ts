@@ -8,6 +8,7 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { Select } from 'src/app/models/select';
 import { Deposit } from 'src/app/models/deposit.model';
 import { depositInt } from 'src/app/models/deposit';
+import { withdrawInt } from 'src/app/models/withdraw';
 @Injectable({
   providedIn: 'root'
 })
@@ -52,14 +53,22 @@ export class InventoryService {
     this.fireStore.collection('inventory').add(inventory);
   }
 
-  updateInventory(inventoryId: string, amount: number){
+  updateInventoryAmount(inventoryId: string, amount: number){
     this.fireStore.doc('inventory/'+inventoryId).update({
       amount: amount
     });
   }
 
+  updateInventory(inventoryId: string, {name, store, type}){
+    this.fireStore.doc('inventory/'+inventoryId).update({name: name, store: store, type: type});
+  }
+
   addDeposit(deposit: depositInt){
     this.fireStore.collection('deposit').add(deposit);
+  }
+
+  addWithdraw(withdraw: withdrawInt){
+    this.fireStore.collection('withdraw').add(withdraw);
   }
 
 }

@@ -153,7 +153,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
     this.modalService.openModal(CreateModalComponent, config);
   }
 
-  onDepositModal(){
+  onDWModal(job:string){
     if(this.selectedInventory === null){
       this.alertService.error("Please Select An Inventory First", "Error!!!");
     } else {
@@ -161,7 +161,8 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
         backdrop: true,
         ignoreBackdropClick: true,
         initialState:{
-          inventory: this.selectedInventory
+          inventory: this.selectedInventory,
+          job: job
         }
       };
       this.modalService.openModal(DepositModalComponent, config);

@@ -3,13 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FaIconModule } from './fa-icon/fa-icon.module';
 import { DataTablesModule } from 'angular-datatables';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { EmailExistDirective } from './directives/email-exist.directive';
-import { PasswordMatcherDirective } from './directives/passsword-matcher.directive';
-import { EmailValidDirective } from './directives/email-valid.directive';
 import { SpinnerComponent } from './components/spinner/spinner.component';
-
+import { AmountValidatorDirective } from './directives/amount-validator.directive'
 @NgModule({
-  declarations: [EmailExistDirective, PasswordMatcherDirective, EmailValidDirective, SpinnerComponent],
+  declarations: [AmountValidatorDirective, SpinnerComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -23,10 +20,8 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
     ReactiveFormsModule,
     DataTablesModule,
     FaIconModule,
-    EmailExistDirective,
     SpinnerComponent,
-    PasswordMatcherDirective,
-    EmailValidDirective
+    AmountValidatorDirective
   ]
 })
 export class SharedModule { }

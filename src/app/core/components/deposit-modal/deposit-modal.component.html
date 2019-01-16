@@ -1,20 +1,27 @@
-<div #depositModal class="modal-header">
-  <h4 class="modal-title pull-left">title</h4>
+<div #depositModal class="modal-header bg-success">
+  <h4 class="modal-title pull-left text-white">{{jobTitle}} {{inventory.item.name}}</h4>
   <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <div class="modal-body">
+  <p>Amount Avaiable: {{amountAvailable}}</p>
   <form [formGroup]="depositForm" (ngSubmit)="sendForm()">
     <div class="form-group">
-      <input type="number" id="amount" class="form-control" formControlName="amount" placeholder="Amount">
+      <input type="number" id="amount" class="form-control" (change)="onAmountChange()" formControlName="amount" placeholder="Amount">
+      <div *ngIf="amount.errors && !amount.pristine">
+        <small *ngIf="amount.errors.required" class="form-text error-color">Amount required</small>
+      </div>
     </div>
     <div class="form-group">
-      <input type="text" id="user" class="form-control" formControlName="user" placeholder="Depsotied By">
+      <input type="text" id="user" class="form-control" formControlName="user" [placeholder]="jobPlaceholder">
+      <div *ngIf="user.errors && !user.pristine">
+        <small *ngIf="user.errors.required" class="form-text error-color">User required</small>
+      </div>
     </div>
     <div class="form-group">
       <input type="datetime-local" id="datetime" class="form-control" formControlName="datetime" placeholder="Deposited On">
     </div>
-    <a class="btn btn-primary" (click)="sendForm()" type="button">Deposit</a>
+    <button [disabled]="depositForm.invalid || amountAvailable < 0" class="btn btn-success" (click)="sendForm()" type="button">{{jobTitle}}</button>
   </form>
 </div>
