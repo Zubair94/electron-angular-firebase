@@ -42,21 +42,6 @@ export const togumoguSelect: Select[] = [
     }
 ];
 
-export const storeSelect: Select[] = [
-  {
-    label: "All",
-    value: 0
-  },
-  {
-    label: "Light of Hope",
-    value: 1
-  },
-  {
-    label: "ToguMogu",
-    value: 2    
-  }
-]
-
 export const valueSelect: Select[] = [
   {
     label: "Kids Time",

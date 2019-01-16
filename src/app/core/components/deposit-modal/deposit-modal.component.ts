@@ -51,7 +51,8 @@ export class DepositModalComponent extends BasicFormBuilder implements OnInit, A
 
   onAmountChange(){
     this.amountAvailable = this.inventory.item.amount;
-    if(this.inventory.job === "deposit"){
+    console.log(this.inventory.job)
+    if(this.job === "deposit"){
       this.amountAvailable += this.amount.value;
     } else {
       this.amountAvailable -= this.amount.value;
@@ -109,10 +110,6 @@ export class DepositModalComponent extends BasicFormBuilder implements OnInit, A
       this.inventoryService.addWithdraw(withdraw);
       this.inventoryService.updateInventoryAmount(this.inventory.item.id, amountWithdrawn);
     }
-  }
-
-  private edit(){
-    
   }
 
   get amount(){

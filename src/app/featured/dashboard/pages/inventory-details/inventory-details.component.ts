@@ -13,63 +13,82 @@ import { DataTableDirective } from 'angular-datatables';
 import { ModalService } from 'src/app/core/services/modal.service';
 import { Inventory } from 'src/app/models/inventory.model';
 import { AlertService } from 'src/app/core/services/alert.service';
-import { lohSelect, togumoguSelect, storeSelect } from 'src/app/models/label-values';
-import { inventoryInt } from 'src/app/models/inventory';
+import { lohSelect, togumoguSelect } from 'src/app/models/label-values';
 import { DepositModalComponent } from 'src/app/core/components/deposit-modal/deposit-modal.component';
 import { InventoryService } from 'src/app/core/services/inventory.service';
 import { CreateModalComponent } from 'src/app/core/components/create-modal/create-modal.component';
 import { Deposit } from 'src/app/models/deposit.model';
+import { Withdraw } from 'src/app/models/withdraw.model';
 @Component({
   selector: 'app-inventory-details',
   templateUrl: './inventory-details.component.html',
   styleUrls: ['./inventory-details.component.scss']
 })
-export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewInit {
+export class InventoryDetailsComponent implements OnInit, OnDestroy {
+  //table tag id references
+  @ViewChildren(DataTableDirective) private dtElements: QueryList<DataTableDirective>;
+
+  //table row id references
   @ViewChildren('inventoryRef') private inventoryRef: QueryList<ElementRef>;
   @ViewChildren('depositRef') private depositRef: QueryList<ElementRef>;
-
-  @ViewChildren(DataTableDirective) 
-  dtElements: QueryList<DataTableDirective>;
+  @ViewChildren('withdrawRef') private withdrawRef: QueryList<ElementRef>;
   
+  //array of datatable Options
   dtOptions: DataTables.Settings[] = [];
 
+  //datatrigger Subjects for datatable
   dtTriggerInventory: Subject<any> = new Subject();
   dtTriggerDeposit: Subject<any> = new Subject();
-  //dtTriggerWithdraw: Subject<any> = new Subject();
+  dtTriggerWithdraw: Subject<any> = new Subject();
 
   routerSubscription: Subscription;
 
+  //Inventory Variables
   inventorySubscription: Subscription;
   isInventoryChangedSubscription: Subscription;
   inventoryList: Inventory [];
   filteredInventoryList: Inventory[];
 
+  //Deposit Variables
   depositSubscription: Subscription;
   isDepositChangedSubscription: Subscription;
   depositList: Deposit [];
   filteredDepositList: Deposit[];
 
+  //Withdraw Variables
+  withdrawSubscription: Subscription;
+  isWithdrawChangedSubscription: Subscription;
+  withdrawList: Withdraw [];
+  filteredWithdrawList: Withdraw[];
+
+  //Filter Objects
   activeFilters = {};
   activeDepositFilters = {};
+  activeWithdrawFilters = {};
 
-  //private selectedInventory = new BehaviorSubject
+  //selected row Objects
   selectedInventory: any = null;
   selectedDeposit: any = null;
+  selectedWithdraw: any = null;
   
+  //select tag options Object Array
   lohSelect: Select[] = lohSelect;
   togumoguSelect: Select[] = togumoguSelect;
 
- 
+  /**
+   * Select Tag Init. Depends on currentStoreValue and changes
+   */
   currentTypeSelect: Select[] = this.lohSelect;
-  //storeSelect: Select[] = storeSelect
 
+  /**
+   * current DataStore Value Init
+   * current Select Type Value Init
+   */
   currentStoreValue: number = null;
   currentTypeValue: Select = null;
-
   constructor(private inventoryService: InventoryService, private alertService: AlertService, private renderer: Renderer2, private modalService: ModalService, private router: Router, private activatedRoute: ActivatedRoute) { }
-
   ngOnInit() {
-    //Datatables
+    //Datatables Options
     this.dtOptions[0] = {
       select: {
         style: 'single'
@@ -82,7 +101,13 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
       }
     }
 
-    //Inventory
+    this.dtOptions[2] = {
+      select: {
+        style: 'single'
+      }
+    }
+
+    //Fetching Inventory
     this.inventorySubscription = this.inventoryService.inventoryListChanged.subscribe(inventoryList => {
       this.inventoryList = inventoryList;
       this.applyFilter(0);
@@ -96,7 +121,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
     });
     this.inventoryService.fetchInventory();
     
-    //Deposit
+    //Fetching Deposit
     this.depositSubscription = this.inventoryService.depositListChanged.subscribe(depositList => {
       this.depositList = depositList;
       this.applyDepositFilter(0);
@@ -109,38 +134,61 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
       }
     });
     this.inventoryService.fetchDeposit();
+
+    //Fetching Withdraw
+    this.withdrawSubscription = this.inventoryService.withdrawListChanged.subscribe(withdrawList => {
+      this.withdrawList = withdrawList;
+      this.applyWithdrawFilter(0);
+    });
+    this.isWithdrawChangedSubscription = this.inventoryService.isWithdrawListChanged.subscribe(isChanged => {
+      if(isChanged === 3){
+        this.reRenderTable();
+      } else {
+        this.dtTriggerWithdraw.next();
+      }
+    });
+    this.inventoryService.fetchWithdraw();
   }
-
-  ngAfterViewInit(){
-
-  }
-
-  ngOnDestroy(): void {
+  ngOnDestroy() {
+    //Datatable Trigger Cleanup
     this.dtTriggerInventory.unsubscribe();
     this.dtTriggerDeposit.unsubscribe();
+    this.dtTriggerWithdraw.unsubscribe();
+    //Inventory Cleanup
     this.inventorySubscription.unsubscribe();
     this.isInventoryChangedSubscription.unsubscribe();
+    //Deposit Cleanup
+    this.depositSubscription.unsubscribe();
+    this.isDepositChangedSubscription.unsubscribe();
+    //Withdraw Cleanup
+    this.withdrawSubscription.unsubscribe();
+    this.isWithdrawChangedSubscription.unsubscribe();
+    //Angular Router Cleanup
     this.routerSubscription.unsubscribe();
   }
-
+  /**
+   * Rerender Datatable based on id Tag
+   */
   reRenderTable() {
     this.dtElements.forEach((dtElement: DataTableDirective, index) => {
-      console.log(dtElement);
       dtElement.dtInstance.then((dtInstance: any) => {
-        //console.log(table_index);
-        //console.log(`The DataTable ${index} instance ID is: ${dtInstance.table().node().id}`);
         if(dtInstance.table().node().id === "inventory-table"){
           dtInstance.destroy();
           this.dtTriggerInventory.next();
         } else if(dtInstance.table().node().id === "deposit-table"){
           dtInstance.destroy();
           this.dtTriggerDeposit.next();
+        } else {
+          dtInstance.destroy();
+          this.dtTriggerWithdraw.next();
         }
       });
     });
   }
-
-  deSelectTable(): void {
+  /**
+   * Deselect all rows Datatable Based on id tag
+   */
+  deSelectTable() {
     this.dtElements.forEach((dtElement: DataTableDirective, index) => {
       dtElement.dtInstance.then((dtInstance: any) => {
         if(dtInstance.table().node().id === "inventory-table"){
@@ -151,26 +199,50 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
           dtInstance.destroy();
           dtInstance.rows().deselect();
           this.dtTriggerDeposit.next();
+        } else {
+          dtInstance.destroy();
+          dtInstance.rows().deselect();
+          this.dtTriggerWithdraw.next();
         }
       });
     });
   }
 
+  /**
+   * apply Filter to Lists
+   * @param state is Function called on ngOnInit or not
+   */
   private applyFilter(state: number){
     this.filteredInventoryList = _.filter(this.inventoryList, _.conforms(this.activeFilters));
     if(state === 1){
       this.reRenderTable();
     }
   }
-
+  /**
+   * apply Filter to Lists
+   * @param state is Function called on ngOnInit or not
+   */
   private applyDepositFilter(state: number){
     this.filteredDepositList = _.filter(this.depositList, _.conforms(this.activeDepositFilters));
-    console.log(this.filteredDepositList);
     if(state === 1){
       this.reRenderTable();
     }
   }
-
+  /**
+   * apply Filter to Lists
+   * @param state is Function called on ngOnInit or not
+   */
+  private applyWithdrawFilter(state: number){
+    this.filteredWithdrawList = _.filter(this.withdrawList, _.conforms(this.activeWithdrawFilters));
+    if(state === 1){
+      this.reRenderTable();
+    }
+  }
+  /**
+   * Filter Methods
+   * @param property filter type for multfilter tagging
+   * @param rule Filter Rule Based on Select Tag Options
+   */
   filterType(property: string, rule: any){
     if(rule.label === "All"){
       this.removeFilter("type");
@@ -180,7 +252,6 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
       this.applyFilter(1);
     }
   }
-
   filterDepositType(property: string, rule: any){
     if(rule.label === "All"){
       this.removeDepositFilter("type");
@@ -190,7 +261,15 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
       this.applyDepositFilter(1);
     }
   }
-
+  filterWithdrawType(property: string, rule: any){
+    if(rule.label === "All"){
+      this.removeWithdrawFilter("type");
+    } else {
+      rule = rule.value;
+      this.activeWithdrawFilters[property] = val => val == rule;
+      this.applyWithdrawFilter(1);
+    }
+  }
   filterStore(property: string, rule: any){
     if(rule === 1){
       this.currentTypeSelect = this.lohSelect;
@@ -203,11 +282,9 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
       this.activeFilters[property] = val => val == rule;
       this.applyFilter(1);
     } else {
-      //this.removeFilter("type");
       this.removeFilter("store");
     }
   }
-
   filterDepositStore(property: string, rule: any){
     if(rule === 1){
       this.currentTypeSelect = this.lohSelect;
@@ -224,32 +301,54 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
       this.removeDepositFilter("store");
     }
   }
-  
+  filterWithdrawStore(property: string, rule: any){
+    if(rule === 1){
+      this.currentTypeSelect = this.lohSelect;
+      this.currentTypeValue = null;
+      this.activeWithdrawFilters[property] = val => val == rule;
+      this.applyWithdrawFilter(1);
+    } else if (rule === 2) {
+      this.currentTypeSelect = this.togumoguSelect;
+      this.currentTypeValue = null;
+      this.activeWithdrawFilters[property] = val => val == rule;
+      this.applyWithdrawFilter(1);
+    } else {
+      //this.removeFilter("type");
+      this.removeWithdrawFilter("store");
+    }
+  }
   removeFilter(property: string) {
-    delete this.activeFilters[property]
-    this[property] = null
-    this.applyFilter(1)
+    delete this.activeFilters[property];
+    this[property] = null;
+    this.applyFilter(1);
   }
-
   removeDepositFilter(property: string) {
-    delete this.activeDepositFilters[property]
-    this[property] = null
-    this.applyDepositFilter(1)
+    delete this.activeDepositFilters[property];
+    this[property] = null;
+    this.applyDepositFilter(1);
   }
-
-  getQueryParams(){
-    this.routerSubscription = this.activatedRoute.queryParams.pipe(filter(params => params.dataStore)).subscribe(params => {
-      console.log(params);
-      //console.log(this.currentStore);
-    });
+  removeWithdrawFilter(property: string) {
+    delete this.activeWithdrawFilters[property];
+    this[property] = null;
+    this.applyWithdrawFilter(1);
   }
-
+  removeAllFilters(){
+    this.activeFilters = null;
+    this.activeDepositFilters = null;
+    this.activeWithdrawFilters = null;
+  }
+  /**
+   * Tab Change Event
+   */
   onTabChange(){
     this.currentStoreValue = null;
     this.currentTypeSelect = this.lohSelect;
     this.currentTypeValue = null;
+    this.removeAllFilters();
   }
-
+  /**
+   * Create Inventory
+   */
   onCreateModal(){
     const config:any = {
       backdrop: true,
@@ -257,7 +356,10 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
     };
     this.modalService.openModal(CreateModalComponent, config);
   }
-
+  /**
+   * Based on Param Open Modal Deposit or Withdraw Inventory
+   * @param job "deposit/withdraw"
+   */
   onDWModal(job:string){
     if(this.selectedInventory === null){
       this.alertService.error("Please Select An Inventory First", "Error!!!");
@@ -275,39 +377,14 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
       this.selectedInventory = null;
     }
   }
-
-  // deposit(amount: number){
-  //   if(this.selectedInventory === null){
-  //     this.alertService.error("Please Select An Inventory First", "Error!!!");
-  //   } else {
-  //     Object.keys(this.inventoryList).forEach(key => {
-  //       if(this.inventoryList[key].id === this.selectedInventory.item.id){
-  //         this.inventoryList[key].amount += amount;
-  //       }
-  //     });
-  //     this.deSelectTable();
-  //     this.selectedInventory = null;
-  //   }
-  // }
-
-  // withdraw(amount: number){
-  //   if(this.selectedInventory === null){
-  //     this.alertService.error("Please Select An Inventory First", "Error!!!");
-  //   } else {
-  //     Object.keys(this.inventoryList).forEach(key => {
-  //       if(this.inventoryList[key].id === this.selectedInventory.item.id){
-  //         this.inventoryList[key].amount -= amount;
-  //       }
-  //     });
-  //     this.deSelectTable();
-  //     this.selectedInventory = null;
-  //   }
-  // }
-
+  /**
+   * Event for Clicking on Row referenced as inventoryRef
+   * @param item  the Object Value that inventoryRef poiints to
+   * @param index index from template variable inventoryRef
+   */
   onRowClick(item: Inventory, index){
     index = parseInt(index);
     const element = this.inventoryRef.toArray()[index].nativeElement;
-    console.log(element);
     if(!element.classList.contains('selected')){
       this.selectedInventory = {
         item: item,
@@ -315,15 +392,17 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
       };
     }
     else {
-      //this.deSelectTable();
       this.selectedInventory = null
     }
   }
-
+  /**
+   * Event for Clicking on Row referenced as depositRef
+   * @param item the Object Value that depositRef poiints to
+   * @param index index from emplate variable depositRef
+   */
   onDepositRowClick(item: Deposit, index){
     index = parseInt(index);
     const element = this.depositRef.toArray()[index].nativeElement;
-    console.log(element);
     if(!element.classList.contains('selected')){
       this.selectedDeposit = {
         item: item,
@@ -331,8 +410,33 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy, AfterViewIn
       };
     }
     else {
-      //this.deSelectTable();
       this.selectedDeposit = null
     }
+  }
+  /**
+   * Event for Clicking on Row referenced as withdrawRef
+   * @param item the Object Value that withdrawRef poiints to
+   * @param index index from emplate variable withdrawRef
+   */
+  onWithdrawRowClick(item: Withdraw, index){
+    index = parseInt(index);
+    const element = this.withdrawRef.toArray()[index].nativeElement;
+    if(!element.classList.contains('selected')){
+      this.selectedWithdraw = {
+        item: item,
+        index: index
+      };
+    }
+    else {
+      this.selectedWithdraw = null
+    }
+  }
+  //To Do Filter By Date
+  //Not Required
+  getQueryParams(){
+    this.routerSubscription = this.activatedRoute.queryParams.pipe(filter(params => params.dataStore)).subscribe(params => {
+      console.log(params);
+      //console.log(this.currentStore);
+    });
   }
 }
