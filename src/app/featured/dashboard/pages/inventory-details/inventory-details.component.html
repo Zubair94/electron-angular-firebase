@@ -1,34 +1,34 @@
 <div class="inventory-details-wrapper">
-  <div class="inventory-select-field row justify-content-center">
-    <div class="form-group col-md-4">
-        <label for="type-select">Select Inventory Type:</label>
-        <select [(ngModel)]="currentTypeValue" (change)="filterType('type', currentTypeValue)" class="form-control" id="type-select">
-          <option *ngFor="let currentTypeValue of currentTypeSelect" [ngValue]="currentTypeValue">{{currentTypeValue.label}}</option>
-        </select>
-    </div>
-    <div class="form-group col-md-4">
-      <label for="store-select">Select Inventory Store Type:</label>
-      <select [(ngModel)]="currentStoreValue" (change)="filterStore('store', currentStoreValue)" class="form-control" id="store-select">
-        <option [ngValue]="0">All</option>
-        <option [ngValue]="1">Light of Hope</option>
-        <option [ngValue]="2">ToguMogu</option>
-      </select>
-    </div>
-  </div>
   <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" id="index-tab" data-toggle="tab" href="#index" role="tab" aria-controls="index" aria-selected="true">Index</a>
+      <a class="nav-link active" id="index-tab" data-toggle="tab" href="#index" (click)="onTabChange()" role="tab" aria-controls="index" aria-selected="true">Index</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="deposit-tab" data-toggle="tab" href="#deposit" (click)="test()" role="tab" aria-controls="deposit" aria-selected="false">Deposit</a>
+      <a class="nav-link" id="deposit-tab" data-toggle="tab" href="#deposit" (click)="onTabChange()" role="tab" aria-controls="deposit" aria-selected="false">Deposit</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="withdraw-tab" data-toggle="tab" href="#withdraw" role="tab" aria-controls="withdraw" aria-selected="false">Withdraw</a>
+      <a class="nav-link" id="withdraw-tab" data-toggle="tab" href="#withdraw" (click)="onTabChange()" role="tab" aria-controls="withdraw" aria-selected="false">Withdraw</a>
     </li>
   </ul>
   <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active" id="index" role="tabpanel" aria-labelledby="index-tab">
       <div class="container-fluid mt-4">
+          <div class="inventory-select-field row justify-content-center">
+              <div class="form-group col-md-4">
+                  <label for="type-select">Select Inventory Type:</label>
+                  <select [(ngModel)]="currentTypeValue" (change)="filterType('type', currentTypeValue)" class="form-control" id="type-select">
+                    <option *ngFor="let currentTypeValue of currentTypeSelect" [ngValue]="currentTypeValue">{{currentTypeValue.label}}</option>
+                  </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="store-select">Select Inventory Store Type:</label>
+                <select [(ngModel)]="currentStoreValue" (change)="filterStore('store', currentStoreValue)" class="form-control" id="store-select">
+                  <option [ngValue]="0">All</option>
+                  <option [ngValue]="1">Light of Hope</option>
+                  <option [ngValue]="2">ToguMogu</option>
+                </select>
+              </div>
+            </div>
           <div class="card mb-3">
             <div class="card-header">
               <fa-icon [icon]="['fas','table']"></fa-icon>
@@ -61,7 +61,7 @@
                 </button>
               </div>
               <div class="table-responsive">
-                <table class="table table-bordered table-hover" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" width="100%" cellspacing="0">
+                <table id="inventory-table" class="table table-bordered table-hover" datatable [dtOptions]="dtOptions[0]" [dtTrigger]="dtTriggerInventory" width="100%" cellspacing="0">
                   <thead>
                     <tr>
                       <th scope="col">ID</th>
@@ -86,6 +86,22 @@
     </div>
     <div class="tab-pane fade" id="deposit" role="tabpanel" aria-labelledby="deposit-tab">
       <div class="container-fluid mt-4">
+          <div class="inventory-select-field row justify-content-center">
+              <div class="form-group col-md-4">
+                  <label for="type-select">Select Inventory Type:</label>
+                  <select [(ngModel)]="currentTypeValue" (change)="filterDepositType('type', currentTypeValue)" class="form-control" id="type-select">
+                    <option *ngFor="let currentTypeValue of currentTypeSelect" [ngValue]="currentTypeValue">{{currentTypeValue.label}}</option>
+                  </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="store-select">Select Inventory Store Type:</label>
+                <select [(ngModel)]="currentStoreValue" (change)="filterDepositStore('store', currentStoreValue)" class="form-control" id="store-select">
+                  <option [ngValue]="0">All</option>
+                  <option [ngValue]="1">Light of Hope</option>
+                  <option [ngValue]="2">ToguMogu</option>
+                </select>
+              </div>
+            </div>
         <div class="card mb-3">
           <div class="card-header">
             <fa-icon [icon]="['fas','table']"></fa-icon>
@@ -103,21 +119,25 @@
               </button>
             </div>
             <div class="table-responsive">
-              <table class="table table-bordered table-hover" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" width="100%" cellspacing="0">
+              <table id="deposit-table" class="table table-bordered table-hover" datatable [dtOptions]="dtOptions[1]" [dtTrigger]="dtTriggerDeposit" width="100%" cellspacing="0">
                 <thead>
                   <tr>
                     <th scope="col">ID</th>
                     <th scope="col">Name</th>
                     <th scope="col">Amount</th>
+                    <th scope="col">Deposited By</th>
+                    <th scope="col">Deposited On</th>
                     <th scope="col">Type</th>
                   </tr>
                 </thead>
                 <tbody>	
-                  <tr #inventoryRef (click)="onRowClick(inventory, i)" *ngFor="let inventory of filteredInventoryList; let i = index;">
-                    <td>{{inventory.id}}</td>
-                    <td>{{inventory.name}}</td>
-                    <td>{{inventory.amount}}</td>
-                    <td>{{inventory.typelabel}}</td>
+                  <tr #depositRef (click)="onDepositRowClick(deposit, i)" *ngFor="let deposit of filteredDepositList; let i = index;">
+                    <td>{{deposit.id}}</td>
+                    <td>{{deposit.name}}</td>
+                    <td>{{deposit.amount}}</td>
+                    <td>{{deposit.user}}</td>
+                    <td>{{deposit.depositedOn | date}}</td>
+                    <td>{{deposit.typelabel}}</td>
                   </tr>
                 </tbody>
               </table>
