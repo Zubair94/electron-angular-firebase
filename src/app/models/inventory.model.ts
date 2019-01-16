@@ -18,7 +18,7 @@ export class Inventory{
         this.typelabel = this.extractLabel(inventory.type, valueSelect);
     }
 
-    private extractLabel(type, typeList:Select[]): string{
+    private extractLabel(type: number, typeList:Select[]): string{
         let label: string;
         Object.keys(typeList).forEach(key => {
             if(type === typeList[key].value){

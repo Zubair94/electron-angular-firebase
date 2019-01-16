@@ -72,7 +72,9 @@ export class DepositModalComponent extends BasicFormBuilder implements OnInit, A
         name: this.inventory.item.name, 
         amount: this.amount.value, 
         user: this.user.value, 
-        depositedOn: dateinStr
+        depositedOn: dateinStr,
+        type: this.inventory.item.type,
+        store: this.inventory.item.store
       }
       this.deposit(deposit);
       this.bsModalRef.hide();
@@ -81,7 +83,9 @@ export class DepositModalComponent extends BasicFormBuilder implements OnInit, A
         name: this.inventory.item.name, 
         amount: this.amount.value, 
         user: this.user.value, 
-        withdrawnOn: dateinStr
+        withdrawnOn: dateinStr,
+        type: this.inventory.item.type,
+        store: this.inventory.item.store
       }
       this.withdraw(withdraw);
       this.bsModalRef.hide();

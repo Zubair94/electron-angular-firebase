@@ -30,73 +30,100 @@
     <div class="tab-pane fade show active" id="index" role="tabpanel" aria-labelledby="index-tab">
       <div class="container-fluid mt-4">
           <div class="card mb-3">
-              <div class="card-header">
-                <i class="fas fa-table"></i>
-                Data Table Example</div>
-              <div class="card-body">
-                <div class="table-buttons d-flex justify-content-start align-items-center my-2">
-                  <button (click)="onCreateModal()" type="button" class="btn btn-success">
-                    <fa-icon [icon]="['fas','folder-plus']"></fa-icon>
-                    <span> Create</span>
-                  </button>
-                  <div class="mr-2"></div>
-                  <button (click)="onDWModal('deposit')" type="button" class="btn btn-success">
-                    <fa-icon [icon]="['fas','plus']"></fa-icon>
-                    <span> Deposit</span>
-                  </button>
-                  <div class="mr-2"></div>
-                  <button (click)="onDWModal('withdraw')" type="button" class="btn btn-success">
-                    <fa-icon [icon]="['fas','minus']"></fa-icon>
-                    <span> Withdraw</span>
-                  </button>
-                  <div class="mr-2"></div>
-                  <button class="btn btn-success">
-                    <fa-icon [icon]="['fas','edit']"></fa-icon>
-                    <span> Edit</span>
-                  </button>
-                  <div class="mr-2"></div>
-                  <button class="btn btn-success">
-                    <fa-icon [icon]="['fas','trash-alt']"></fa-icon>
-                    <span> Delete</span>
-                  </button>
-                </div>
-                <div class="table-responsive">
-                  <table class="table table-bordered table-hover" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" width="100%" cellspacing="0">
-                    <thead>
-                      <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">Type</th>
-                      </tr>
-                    </thead>
-                    <tbody>	
-                      <tr #inventoryRef (click)="onRowClick(inventory, i)" *ngFor="let inventory of filteredInventoryList; let i = index;">
-                        <td>{{inventory.id}}</td>
-                        <td>{{inventory.name}}</td>
-                        <td>{{inventory.amount}}</td>
-                        <td>{{inventory.typelabel}}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+            <div class="card-header">
+              <fa-icon [icon]="['fas','table']"></fa-icon>
+              Inventory</div>
+            <div class="card-body">
+              <div class="table-buttons d-flex justify-content-start align-items-center my-2">
+                <button (click)="onCreateModal()" type="button" class="btn btn-success">
+                  <fa-icon [icon]="['fas','folder-plus']"></fa-icon>
+                  <span> Create</span>
+                </button>
+                <div class="mr-2"></div>
+                <button (click)="onDWModal('deposit')" type="button" class="btn btn-success">
+                  <fa-icon [icon]="['fas','plus']"></fa-icon>
+                  <span> Deposit</span>
+                </button>
+                <div class="mr-2"></div>
+                <button (click)="onDWModal('withdraw')" type="button" class="btn btn-success">
+                  <fa-icon [icon]="['fas','minus']"></fa-icon>
+                  <span> Withdraw</span>
+                </button>
+                <div class="mr-2"></div>
+                <button class="btn btn-success">
+                  <fa-icon [icon]="['fas','edit']"></fa-icon>
+                  <span> Edit</span>
+                </button>
+                <div class="mr-2"></div>
+                <button class="btn btn-success">
+                  <fa-icon [icon]="['fas','trash-alt']"></fa-icon>
+                  <span> Delete</span>
+                </button>
               </div>
-              <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th scope="col">ID</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Amount</th>
+                      <th scope="col">Type</th>
+                    </tr>
+                  </thead>
+                  <tbody>	
+                    <tr #inventoryRef (click)="onRowClick(inventory, i)" *ngFor="let inventory of filteredInventoryList; let i = index;">
+                      <td>{{inventory.id}}</td>
+                      <td>{{inventory.name}}</td>
+                      <td>{{inventory.amount}}</td>
+                      <td>{{inventory.typelabel}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
+          </div>
       </div>
     </div>
     <div class="tab-pane fade" id="deposit" role="tabpanel" aria-labelledby="deposit-tab">
-      Deposit
-      <div class="table-buttons d-flex justify-content-start align-items-center my-2">
-        <button class="btn btn-success">
-          <fa-icon [icon]="['fas','edit']"></fa-icon>
-          <span> Edit</span>
-        </button>
-        <div class="mr-2"></div>
-        <button class="btn btn-success">
-          <fa-icon [icon]="['fas','trash-alt']"></fa-icon>
-          <span> Delete</span>
-        </button>
+      <div class="container-fluid mt-4">
+        <div class="card mb-3">
+          <div class="card-header">
+            <fa-icon [icon]="['fas','table']"></fa-icon>
+            Deposit</div>
+          <div class="card-body">
+            <div class="table-buttons d-flex justify-content-start align-items-center my-2">
+              <button class="btn btn-success">
+                <fa-icon [icon]="['fas','edit']"></fa-icon>
+                <span> Edit</span>
+              </button>
+              <div class="mr-2"></div>
+              <button class="btn btn-success">
+                <fa-icon [icon]="['fas','trash-alt']"></fa-icon>
+                <span> Delete</span>
+              </button>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" width="100%" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Type</th>
+                  </tr>
+                </thead>
+                <tbody>	
+                  <tr #inventoryRef (click)="onRowClick(inventory, i)" *ngFor="let inventory of filteredInventoryList; let i = index;">
+                    <td>{{inventory.id}}</td>
+                    <td>{{inventory.name}}</td>
+                    <td>{{inventory.amount}}</td>
+                    <td>{{inventory.typelabel}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="tab-pane fade" id="withdraw" role="tabpanel" aria-labelledby="withdraw-tab">

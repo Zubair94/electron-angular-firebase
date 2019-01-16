@@ -170,55 +170,34 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
       this.selectedInventory = null;
     }
   }
-  
-  test(){
-    console.log("test");
-  }
 
-  test2(){
-    const config:any = {
-      backdrop: true,
-      ignoreBackdropClick: true,
-      initialState: {
-        list: [
-          'Open a modal with component',
-          'Pass your data',
-          'Do something else',
-          '...'
-        ],
-        title: 'Modal with component'
-      }
-    };
-    this.modalService.openModal(CreateModalComponent, config);
-  }
+  // deposit(amount: number){
+  //   if(this.selectedInventory === null){
+  //     this.alertService.error("Please Select An Inventory First", "Error!!!");
+  //   } else {
+  //     Object.keys(this.inventoryList).forEach(key => {
+  //       if(this.inventoryList[key].id === this.selectedInventory.item.id){
+  //         this.inventoryList[key].amount += amount;
+  //       }
+  //     });
+  //     this.deSelectTable();
+  //     this.selectedInventory = null;
+  //   }
+  // }
 
-  deposit(amount: number){
-    if(this.selectedInventory === null){
-      this.alertService.error("Please Select An Inventory First", "Error!!!");
-    } else {
-      Object.keys(this.inventoryList).forEach(key => {
-        if(this.inventoryList[key].id === this.selectedInventory.item.id){
-          this.inventoryList[key].amount += amount;
-        }
-      });
-      this.deSelectTable();
-      this.selectedInventory = null;
-    }
-  }
-
-  withdraw(amount: number){
-    if(this.selectedInventory === null){
-      this.alertService.error("Please Select An Inventory First", "Error!!!");
-    } else {
-      Object.keys(this.inventoryList).forEach(key => {
-        if(this.inventoryList[key].id === this.selectedInventory.item.id){
-          this.inventoryList[key].amount -= amount;
-        }
-      });
-      this.deSelectTable();
-      this.selectedInventory = null;
-    }
-  }
+  // withdraw(amount: number){
+  //   if(this.selectedInventory === null){
+  //     this.alertService.error("Please Select An Inventory First", "Error!!!");
+  //   } else {
+  //     Object.keys(this.inventoryList).forEach(key => {
+  //       if(this.inventoryList[key].id === this.selectedInventory.item.id){
+  //         this.inventoryList[key].amount -= amount;
+  //       }
+  //     });
+  //     this.deSelectTable();
+  //     this.selectedInventory = null;
+  //   }
+  // }
 
   onRowClick(item: Inventory, index){
     index = parseInt(index);
