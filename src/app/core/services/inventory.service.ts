@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { map, filter } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Inventory } from 'src/app/models/inventory.model';
 import { inventoryInt } from 'src/app/models/inventory';
-import { lohSelect } from 'src/app/models/label-values';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { Select } from 'src/app/models/select';
+import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { Deposit } from 'src/app/models/deposit.model';
 import { depositInt } from 'src/app/models/deposit';
 import { withdrawInt } from 'src/app/models/withdraw';
@@ -14,7 +12,6 @@ import { Withdraw } from 'src/app/models/withdraw.model';
   providedIn: 'root'
 })
 export class InventoryService {
-
   inventoryList: Inventory [] = [];
   inventoryListChanged: Subject<Inventory[]> = new Subject();
   private inventoryBehaviour = new BehaviorSubject(1);
@@ -141,5 +138,4 @@ export class InventoryService {
   addWithdraw(withdraw: withdrawInt){
     this.fireStore.collection('withdraw').add(withdraw);
   }
-
 }
