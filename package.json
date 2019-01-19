@@ -42,6 +42,7 @@
     "jszip": "^3.1.5",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.11",
+    "moment": "^2.23.0",
     "ngx-bootstrap": "^3.1.4",
     "ngx-toastr": "^9.1.1",
     "popper.js": "^1.14.6",

@@ -4,5 +4,5 @@ export interface depositInt{
     user: string,
     depositedOn: string,
     type: number,
-    store: number,
+    store: number
 }

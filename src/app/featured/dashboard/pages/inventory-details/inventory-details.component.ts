@@ -19,6 +19,7 @@ import { InventoryService } from 'src/app/core/services/inventory.service';
 import { CreateModalComponent } from 'src/app/core/components/create-modal/create-modal.component';
 import { Deposit } from 'src/app/models/deposit.model';
 import { Withdraw } from 'src/app/models/withdraw.model';
+import { EditModalComponent } from 'src/app/core/components/edit-modal/edit-modal.component';
 @Component({
   selector: 'app-inventory-details',
   templateUrl: './inventory-details.component.html',
@@ -98,15 +99,16 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
     this.dtOptions[1] = {
       select: {
         style: 'single'
-      }
+      },
+      order: [[ 3, "desc" ]]
     }
 
     this.dtOptions[2] = {
       select: {
         style: 'single'
-      }
+      },
+      order: [[ 3, "desc" ]]
     }
-
     //Fetching Inventory
     this.inventorySubscription = this.inventoryService.inventoryListChanged.subscribe(inventoryList => {
       this.inventoryList = inventoryList;
@@ -192,6 +194,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
     this.dtElements.forEach((dtElement: DataTableDirective, index) => {
       dtElement.dtInstance.then((dtInstance: any) => {
         if(dtInstance.table().node().id === "inventory-table"){
+          console.log(dtInstance);
           dtInstance.destroy();
           dtInstance.rows().deselect();
           this.dtTriggerInventory.next();
@@ -378,6 +381,25 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
     }
   }
   /**
+   * Edit Values
+   */
+  onEditItemModal(){
+    if(this.selectedInventory === null){
+      this.alertService.error("Please Select An Inventory First", "Error!!!");
+    } else {
+      const config:any = {
+        backdrop: true,
+        ignoreBackdropClick: true,
+        initialState:{
+          inventory: this.selectedInventory,
+        }
+      };
+      this.modalService.openModal(EditModalComponent, config);
+      this.deSelectTable();
+      this.selectedInventory = null;
+    }
+  }
+  /**
    * Event for Clicking on Row referenced as inventoryRef
    * @param item  the Object Value that inventoryRef poiints to
    * @param index index from template variable inventoryRef
@@ -431,7 +453,6 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
       this.selectedWithdraw = null
     }
   }
-  //To Do Filter By Date
   //Not Required
   getQueryParams(){
     this.routerSubscription = this.activatedRoute.queryParams.pipe(filter(params => params.dataStore)).subscribe(params => {

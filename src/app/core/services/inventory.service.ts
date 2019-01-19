@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { map } from 'rxjs/operators';
+import { map, concat, switchMap } from 'rxjs/operators';
 import { Inventory } from 'src/app/models/inventory.model';
 import { inventoryInt } from 'src/app/models/inventory';
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
@@ -86,14 +86,17 @@ export class InventoryService {
       }
     });
   }
-
+  private fetchInventoryData(path: string){
+    return new Promise(resolve => {
+      
+    });
+  }
   fetchDeposit(){
     this.fireStore.collection('deposit')
     .snapshotChanges()
     .pipe(
       map(docArr => {
         return docArr.map(doc => {
-          //console.log(doc);
           let deposit: depositInt = {
             name: doc.payload.doc.get('name'),
             amount: doc.payload.doc.get('amount'),
@@ -103,7 +106,7 @@ export class InventoryService {
             depositedOn: doc.payload.doc.get('depositedOn')
           };
           return new Deposit(doc.payload.doc.id, deposit); 
-        })
+        });
     })).subscribe((depositList) => {
       if(this.depositList.length === 0){
         this.depositList = depositList;
@@ -127,12 +130,21 @@ export class InventoryService {
     });
   }
 
-  updateInventory(inventoryId: string, {name, store, type}){
-    this.fireStore.doc('inventory/'+inventoryId).update({name: name, store: store, type: type});
+  updateInventory(inventoryId: string, editValue){
+    console.log(inventoryId);
+    console.log(editValue);
+    this.fireStore.doc('inventory/'+inventoryId).update(editValue);
   }
 
-  addDeposit(deposit: depositInt){
-    this.fireStore.collection('deposit').add(deposit);
+  addDeposit(deposit: depositInt, inventoryId: string){
+    this.fireStore.collection('deposit').add({
+      name: deposit.name,
+      amount: deposit.amount,
+      depositedOn: deposit.depositedOn,
+      user: deposit.user,
+      type: deposit.type,
+      store: deposit.store
+    });
   }
 
   addWithdraw(withdraw: withdrawInt){

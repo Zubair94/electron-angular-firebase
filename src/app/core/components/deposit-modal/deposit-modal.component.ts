@@ -5,7 +5,6 @@ import { BasicFormBuilder } from 'src/app/models/basicformbuilder';
 import { InventoryService } from '../../services/inventory.service';
 import { depositInt } from 'src/app/models/deposit';
 import { withdrawInt } from 'src/app/models/withdraw';
-import { validateAmount } from 'src/app/shared/directives/amount-validator.directive';
 
 @Component({
   selector: 'app-deposit-modal',
@@ -51,7 +50,7 @@ export class DepositModalComponent extends BasicFormBuilder implements OnInit, A
 
   onAmountChange(){
     this.amountAvailable = this.inventory.item.amount;
-    console.log(this.inventory.job)
+    //console.log(this.inventory.job)
     if(this.job === "deposit"){
       this.amountAvailable += this.amount.value;
     } else {
@@ -98,7 +97,7 @@ export class DepositModalComponent extends BasicFormBuilder implements OnInit, A
     //console.log(deposit);
     //console.log(this.inventory.item.id);
     let amountDeposited: number = this.amount.value + this.inventory.item.amount;
-    this.inventoryService.addDeposit(deposit);
+    this.inventoryService.addDeposit(deposit, this.inventory.item.id);
     this.inventoryService.updateInventoryAmount(this.inventory.item.id, amountDeposited);
   }
 

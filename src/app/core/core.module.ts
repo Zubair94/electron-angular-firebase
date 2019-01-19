@@ -19,10 +19,11 @@ import { environment } from 'src/environments/environment.prod';
 import { DepositModalComponent } from './components/deposit-modal/deposit-modal.component';
 import { InventoryService } from './services/inventory.service';
 import { CreateModalComponent } from './components/create-modal/create-modal.component';
+import { EditModalComponent } from './components/edit-modal/edit-modal.component';
 
 
 @NgModule({
-  declarations: [DepositModalComponent, CreateModalComponent],
+  declarations: [DepositModalComponent, CreateModalComponent, EditModalComponent],
   imports: [
     HttpClientModule,
     BrowserAnimationsModule,
@@ -43,7 +44,8 @@ import { CreateModalComponent } from './components/create-modal/create-modal.com
   ],
   entryComponents: [
     DepositModalComponent,
-    CreateModalComponent
+    CreateModalComponent,
+    EditModalComponent
   ]
 })
 export class CoreModule { 

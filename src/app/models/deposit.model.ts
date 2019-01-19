@@ -10,8 +10,10 @@ export class Deposit{
     type: number;
     store: number;
     typelabel?: string;
+    test: any;
 
     constructor(id: string, {name, user, amount, depositedOn, type, store}: depositInt){
+        console.log(store, type, name);
         this.depositedOn = depositedOn;
         this.name = name;
         this.type = type;
