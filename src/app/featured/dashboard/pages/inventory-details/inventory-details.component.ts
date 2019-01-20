@@ -117,7 +117,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
     this.isInventoryChangedSubscription = this.inventoryService.isInventoryListChanged.subscribe(isChanged => {
       if(isChanged === 3){
         this.reRenderTable();
-      } else {
+      } else if(isChanged === 2){
         this.dtTriggerInventory.next();
       }
     });
@@ -131,7 +131,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
     this.isDepositChangedSubscription = this.inventoryService.isDepositListChanged.subscribe(isChanged => {
       if(isChanged === 3){
         this.reRenderTable();
-      } else {
+      } else if(isChanged === 2){
         this.dtTriggerDeposit.next();
       }
     });
@@ -145,7 +145,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
     this.isWithdrawChangedSubscription = this.inventoryService.isWithdrawListChanged.subscribe(isChanged => {
       if(isChanged === 3){
         this.reRenderTable();
-      } else {
+      } else if(isChanged === 2){
         this.dtTriggerWithdraw.next();
       }
     });
@@ -194,7 +194,7 @@ export class InventoryDetailsComponent implements OnInit, OnDestroy {
     this.dtElements.forEach((dtElement: DataTableDirective, index) => {
       dtElement.dtInstance.then((dtInstance: any) => {
         if(dtInstance.table().node().id === "inventory-table"){
-          console.log(dtInstance);
+          //console.log(dtInstance);
           dtInstance.destroy();
           dtInstance.rows().deselect();
           this.dtTriggerInventory.next();

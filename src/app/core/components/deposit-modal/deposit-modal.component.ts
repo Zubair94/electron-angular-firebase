@@ -38,7 +38,7 @@ export class DepositModalComponent extends BasicFormBuilder implements OnInit, A
     this.amountAvailable = this.inventory.item.amount;
     this.jobTitle = this.job.charAt(0).toUpperCase() + this.job.slice(1);
     this.jobPlaceholder = this.jobTitle === "Deposit" ? this.jobTitle + 'ed By' : this.jobTitle + 'n By';
-    console.log(this.inventory);
+    //console.log(this.inventory);
   }
 
   ngAfterViewInit(){
@@ -69,23 +69,23 @@ export class DepositModalComponent extends BasicFormBuilder implements OnInit, A
     }
     if(this.job === "deposit"){
       let deposit: depositInt = {
-        name: this.inventory.item.name, 
+        name: null, 
         amount: this.amount.value, 
         user: this.user.value, 
         depositedOn: dateinStr,
-        type: this.inventory.item.type,
-        store: this.inventory.item.store
+        type: null,
+        store: null
       }
       this.deposit(deposit);
       this.bsModalRef.hide();
     } else {
       let withdraw: withdrawInt = {
-        name: this.inventory.item.name, 
+        name: null, 
         amount: this.amount.value, 
         user: this.user.value, 
         withdrawnOn: dateinStr,
-        type: this.inventory.item.type,
-        store: this.inventory.item.store
+        type: null,
+        store: null
       }
       this.withdraw(withdraw);
       this.bsModalRef.hide();
@@ -106,7 +106,7 @@ export class DepositModalComponent extends BasicFormBuilder implements OnInit, A
     if(amountWithdrawn < 0){
       console.log("error");
     } else {
-      this.inventoryService.addWithdraw(withdraw);
+      this.inventoryService.addWithdraw(withdraw, this.inventory.item.id);
       this.inventoryService.updateInventoryAmount(this.inventory.item.id, amountWithdrawn);
     }
   }
